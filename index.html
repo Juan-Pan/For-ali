@@ -17,13 +17,11 @@
             margin: 0;
             padding: 0;
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             background-color: var(--bg-color);
             font-family: 'Lora', serif;
             color: var(--text-color);
             overflow: hidden;
+            position: relative;
         }
 
         body::before {
@@ -32,107 +30,278 @@
              top: 0; left: 0; width: 100%; height: 100%;
              background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
              pointer-events: none;
-             z-index: -1;
+             z-index: 0;
         }
 
-        .main-container {
-            text-align: center;
-            padding: 2rem;
-            position: relative;
-            z-index: 10;
+        .draggable {
+            position: absolute;
+            cursor: grab;
+            user-select: none;
+            z-index: 100;
         }
 
-        .top-section {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 25px;
-            margin-bottom: 50px;
+        .draggable:active {
+            cursor: grabbing;
+            z-index: 200;
         }
 
-        .sampaguita-wrapper img {
+        .flower-item {
             width: 130px;
             height: 130px;
-            object-fit: cover;
             border-radius: 50%;
-            box-shadow: 5px 10px 20px rgba(0,0,0,0.1);
-            animation: organicBreathe 5s ease-in-out infinite alternate;
+            box-shadow: 5px 10px 20px rgba(0,0,0,0.15);
+            transition: transform 0.2s;
         }
 
-        .name-container h1 {
+        .flower-item:hover {
+            transform: scale(1.05);
+        }
+
+        .name-item {
             font-size: 4rem;
             font-weight: 500;
-            margin: 0;
             letter-spacing: -1px;
+            padding: 20px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
         }
 
         .white-heart {
             display: inline-block;
             color: white;
             text-shadow: 0 2px 10px rgba(0,0,0,0.15);
-            animation: gentleBeat 3s ease-in-out infinite;
         }
 
-        .matcha-container img {
+        .matcha-cup {
             width: 280px;
-            height: auto;
+            height: 350px;
+            background: linear-gradient(to bottom, #f5f5dc 0%, #e8dcc0 30%, #d4c4a0 100%);
             border-radius: 20px 20px 50px 50px;
             box-shadow: 0 15px 35px rgba(74, 93, 35, 0.2);
-            animation: gentleFloat 6s ease-in-out infinite alternate;
+            position: relative;
+            overflow: hidden;
         }
 
-        @keyframes organicBreathe {
-            0% { transform: scale(1) rotate(-3deg); }
-            100% { transform: scale(1.08) rotate(3deg); }
+        .matcha-foam {
+            position: absolute;
+            top: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 85%;
+            height: 280px;
+            background: var(--accent-green);
+            border-radius: 50% 50% 40% 40%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 10px;
+            box-shadow: inset 0 -10px 20px rgba(0,0,0,0.1);
         }
 
-        @keyframes gentleFloat {
-            0% { transform: translateY(0px); }
-            100% { transform: translateY(-20px); }
-        }
-
-        @keyframes gentleBeat {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.15); }
+        .ali-letter {
+            font-size: 5rem;
+            font-weight: bold;
+            color: rgba(255, 255, 255, 0.9);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            font-family: 'Lora', serif;
+            line-height: 0.8;
         }
 
         @media (max-width: 768px) {
-            .top-section {
-                flex-direction: column;
-                gap: 15px;
-            }
-            .name-container h1 {
+            .name-item {
                 font-size: 3rem;
             }
-            .sampaguita-wrapper img {
+            .flower-item {
                 width: 100px;
                 height: 100px;
             }
-             .matcha-container img {
+            .matcha-cup {
                 width: 220px;
+                height: 280px;
+            }
+            .ali-letter {
+                font-size: 4rem;
             }
         }
     </style>
 </head>
 <body>
 
-    <div class="main-container">
-        
-        <div class="top-section">
-            <div class="sampaguita-wrapper">
-                <img src="https://images.unsplash.com/photo-1602602724249-17c5e63b8612?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Flor Sampaguita">
-            </div>
-            
-            <div class="name-container">
-                <h1>Ali <span class="white-heart">🤍</span></h1>
-            </div>
-        </div>
-
-        <div class="matcha-container">
-            <img src="https://images.unsplash.com/photo-1563599394479-63419fb40b8d?ixlib=rb-4.0.3&auto=format&fit=crop&w=700&q=80" alt="Té Matcha Latte">
-        </div>
-
+    <div class="draggable flower-item" data-name="flower" style="left: 200px; top: 150px;">
+        <svg viewBox="0 0 200 200" style="width: 100%; height: 100%;">
+            <circle cx="100" cy="100" r="95" fill="#ffffff"/>
+            <circle cx="100" cy="60" r="25" fill="#fffef7"/>
+            <circle cx="140" cy="100" r="25" fill="#fffef7"/>
+            <circle cx="100" cy="140" r="25" fill="#fffef7"/>
+            <circle cx="60" cy="100" r="25" fill="#fffef7"/>
+            <circle cx="73" cy="73" r="25" fill="#fffef7"/>
+            <circle cx="127" cy="73" r="25" fill="#fffef7"/>
+            <circle cx="127" cy="127" r="25" fill="#fffef7"/>
+            <circle cx="73" cy="127" r="25" fill="#fffef7"/>
+            <circle cx="100" cy="100" r="30" fill="#ffd700"/>
+        </svg>
     </div>
+
+    <div class="draggable name-item" data-name="name" style="left: 50%; top: 50px; transform: translateX(-50%);">
+        Ali <span class="white-heart">🤍</span>
+    </div>
+
+    <div class="draggable matcha-cup" data-name="matcha" style="left: 50%; top: 300px; transform: translateX(-50%);">
+        <div class="matcha-foam">
+            <div class="ali-letter">A</div>
+            <div class="ali-letter">l</div>
+            <div class="ali-letter">i</div>
+        </div>
+    </div>
+
+    <script>
+        class DraggableElement {
+            constructor(element) {
+                this.element = element;
+                this.isDragging = false;
+                this.currentX = 0;
+                this.currentY = 0;
+                this.velocityX = 0;
+                this.velocityY = 0;
+                this.lastX = 0;
+                this.lastY = 0;
+                this.animationFrame = null;
+                
+                const rect = element.getBoundingClientRect();
+                this.currentX = rect.left;
+                this.currentY = rect.top;
+                
+                this.element.addEventListener('mousedown', this.onMouseDown.bind(this));
+                this.element.addEventListener('touchstart', this.onTouchStart.bind(this));
+            }
+
+            onMouseDown(e) {
+                this.startDrag(e.clientX, e.clientY);
+                document.addEventListener('mousemove', this.onMouseMove.bind(this));
+                document.addEventListener('mouseup', this.onMouseUp.bind(this));
+            }
+
+            onTouchStart(e) {
+                const touch = e.touches[0];
+                this.startDrag(touch.clientX, touch.clientY);
+                document.addEventListener('touchmove', this.onTouchMove.bind(this));
+                document.addEventListener('touchend', this.onTouchEnd.bind(this));
+                e.preventDefault();
+            }
+
+            startDrag(x, y) {
+                this.isDragging = true;
+                const rect = this.element.getBoundingClientRect();
+                this.offsetX = x - rect.left;
+                this.offsetY = y - rect.top;
+                this.lastX = x;
+                this.lastY = y;
+                this.velocityX = 0;
+                this.velocityY = 0;
+                if (this.animationFrame) {
+                    cancelAnimationFrame(this.animationFrame);
+                }
+            }
+
+            onMouseMove(e) {
+                if (!this.isDragging) return;
+                this.drag(e.clientX, e.clientY);
+            }
+
+            onTouchMove(e) {
+                if (!this.isDragging) return;
+                const touch = e.touches[0];
+                this.drag(touch.clientX, touch.clientY);
+                e.preventDefault();
+            }
+
+            drag(x, y) {
+                this.velocityX = x - this.lastX;
+                this.velocityY = y - this.lastY;
+                
+                this.currentX = x - this.offsetX;
+                this.currentY = y - this.offsetY;
+                
+                this.element.style.left = this.currentX + 'px';
+                this.element.style.top = this.currentY + 'px';
+                this.element.style.transform = 'none';
+                
+                this.lastX = x;
+                this.lastY = y;
+            }
+
+            onMouseUp() {
+                this.stopDrag();
+                document.removeEventListener('mousemove', this.onMouseMove.bind(this));
+                document.removeEventListener('mouseup', this.onMouseUp.bind(this));
+            }
+
+            onTouchEnd() {
+                this.stopDrag();
+                document.removeEventListener('touchmove', this.onTouchMove.bind(this));
+                document.removeEventListener('touchend', this.onTouchEnd.bind(this));
+            }
+
+            stopDrag() {
+                this.isDragging = false;
+                this.applyPhysics();
+            }
+
+            applyPhysics() {
+                const friction = 0.95;
+                const bounce = 0.7;
+                const minVelocity = 0.5;
+                
+                const animate = () => {
+                    this.velocityX *= friction;
+                    this.velocityY *= friction;
+                    
+                    this.currentX += this.velocityX;
+                    this.currentY += this.velocityY;
+                    
+                    const rect = this.element.getBoundingClientRect();
+                    const width = rect.width;
+                    const height = rect.height;
+                    
+                    if (this.currentX < 0) {
+                        this.currentX = 0;
+                        this.velocityX *= -bounce;
+                    }
+                    if (this.currentX + width > window.innerWidth) {
+                        this.currentX = window.innerWidth - width;
+                        this.velocityX *= -bounce;
+                    }
+                    if (this.currentY < 0) {
+                        this.currentY = 0;
+                        this.velocityY *= -bounce;
+                    }
+                    if (this.currentY + height > window.innerHeight) {
+                        this.currentY = window.innerHeight - height;
+                        this.velocityY *= -bounce;
+                    }
+                    
+                    this.element.style.left = this.currentX + 'px';
+                    this.element.style.top = this.currentY + 'px';
+                    this.element.style.transform = 'none';
+                    
+                    if (Math.abs(this.velocityX) > minVelocity || Math.abs(this.velocityY) > minVelocity) {
+                        this.animationFrame = requestAnimationFrame(animate);
+                    }
+                };
+                
+                if (Math.abs(this.velocityX) > minVelocity || Math.abs(this.velocityY) > minVelocity) {
+                    this.animationFrame = requestAnimationFrame(animate);
+                }
+            }
+        }
+
+        document.querySelectorAll('.draggable').forEach(element => {
+            new DraggableElement(element);
+        });
+    </script>
 
 </body>
 </html>

@@ -4,19 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Para Ali 🤍</title>
-    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;1,500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;1,500&family=Great+Vibes&display=swap" rel="stylesheet">
     
     <style>
         :root {
             --bg-color: #fcfaf2;
             --text-color: #4a5d23;
-            --accent-green: #a3b18a;
         }
 
         body {
             margin: 0;
             padding: 0;
-            min-height: 100vh;
+            height: 100vh;
+            width: 100vw;
             background-color: var(--bg-color);
             font-family: 'Lora', serif;
             color: var(--text-color);
@@ -37,271 +37,209 @@
             position: absolute;
             cursor: grab;
             user-select: none;
-            z-index: 100;
+            touch-action: none;
+            z-index: 10;
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1));
+            transition: transform 0.1s;
         }
 
         .draggable:active {
             cursor: grabbing;
-            z-index: 200;
-        }
-
-        .flower-item {
-            width: 130px;
-            height: 130px;
-            border-radius: 50%;
-            box-shadow: 5px 10px 20px rgba(0,0,0,0.15);
-            transition: transform 0.2s;
-        }
-
-        .flower-item:hover {
             transform: scale(1.05);
+            z-index: 100;
         }
 
-        .name-item {
+        .flower-svg {
+            width: 180px;
+            height: 180px;
+        }
+
+        .matcha-svg {
+            width: 220px;
+            height: 220px;
+        }
+
+        .main-text {
             font-size: 4rem;
             font-weight: 500;
-            letter-spacing: -1px;
-            padding: 20px;
-            border-radius: 20px;
-            background: rgba(255, 255, 255, 0.3);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            white-space: nowrap;
+            background: rgba(255, 255, 255, 0.4);
+            padding: 15px 30px;
+            border-radius: 50px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,255,255,0.6);
         }
 
         .white-heart {
-            display: inline-block;
-            color: white;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.15);
-        }
-
-        .matcha-cup {
-            width: 280px;
-            height: 350px;
-            background: linear-gradient(to bottom, #f5f5dc 0%, #e8dcc0 30%, #d4c4a0 100%);
-            border-radius: 20px 20px 50px 50px;
-            box-shadow: 0 15px 35px rgba(74, 93, 35, 0.2);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .matcha-foam {
-            position: absolute;
-            top: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 85%;
-            height: 280px;
-            background: var(--accent-green);
-            border-radius: 50% 50% 40% 40%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            gap: 10px;
-            box-shadow: inset 0 -10px 20px rgba(0,0,0,0.1);
-        }
-
-        .ali-letter {
-            font-size: 5rem;
-            font-weight: bold;
-            color: rgba(255, 255, 255, 0.9);
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-            font-family: 'Lora', serif;
-            line-height: 0.8;
+            color: #fff;
+            text-shadow: 0 0 5px rgba(0,0,0,0.2);
         }
 
         @media (max-width: 768px) {
-            .name-item {
-                font-size: 3rem;
-            }
-            .flower-item {
-                width: 100px;
-                height: 100px;
-            }
-            .matcha-cup {
-                width: 220px;
-                height: 280px;
-            }
-            .ali-letter {
-                font-size: 4rem;
-            }
+            .flower-svg { width: 140px; height: 140px; }
+            .matcha-svg { width: 180px; height: 180px; }
+            .main-text { font-size: 3rem; }
         }
     </style>
 </head>
 <body>
 
-    <div class="draggable flower-item" data-name="flower" style="left: 200px; top: 150px;">
-        <svg viewBox="0 0 200 200" style="width: 100%; height: 100%;">
-            <circle cx="100" cy="100" r="95" fill="#ffffff"/>
-            <circle cx="100" cy="60" r="25" fill="#fffef7"/>
-            <circle cx="140" cy="100" r="25" fill="#fffef7"/>
-            <circle cx="100" cy="140" r="25" fill="#fffef7"/>
-            <circle cx="60" cy="100" r="25" fill="#fffef7"/>
-            <circle cx="73" cy="73" r="25" fill="#fffef7"/>
-            <circle cx="127" cy="73" r="25" fill="#fffef7"/>
-            <circle cx="127" cy="127" r="25" fill="#fffef7"/>
-            <circle cx="73" cy="127" r="25" fill="#fffef7"/>
-            <circle cx="100" cy="100" r="30" fill="#ffd700"/>
+    <div class="draggable" style="top: 10%; left: 10%;">
+        <svg class="flower-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+                    <feOffset dx="2" dy="2" result="offsetblur"/>
+                    <feComponentTransfer>
+                        <feFuncA type="linear" slope="0.3"/>
+                    </feComponentTransfer>
+                    <feMerge> 
+                        <feMergeNode/>
+                        <feMergeNode in="SourceGraphic"/> 
+                    </feMerge>
+                </filter>
+                <radialGradient id="centerGrad" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+                    <stop offset="0%" style="stop-color:#ffeda3;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#ffd700;stop-opacity:1" />
+                </radialGradient>
+            </defs>
+            <g filter="url(#softShadow)">
+                <path d="M100,100 Q60,20 100,10 Q140,20 100,100" fill="#fffdf5" transform="rotate(0 100 100)" />
+                <path d="M100,100 Q60,20 100,10 Q140,20 100,100" fill="#fffdf5" transform="rotate(45 100 100)" />
+                <path d="M100,100 Q60,20 100,10 Q140,20 100,100" fill="#fcfcfc" transform="rotate(90 100 100)" />
+                <path d="M100,100 Q60,20 100,10 Q140,20 100,100" fill="#ffffff" transform="rotate(135 100 100)" />
+                <path d="M100,100 Q60,20 100,10 Q140,20 100,100" fill="#fffdf5" transform="rotate(180 100 100)" />
+                <path d="M100,100 Q60,20 100,10 Q140,20 100,100" fill="#f0f0f0" transform="rotate(225 100 100)" />
+                <path d="M100,100 Q60,20 100,10 Q140,20 100,100" fill="#ffffff" transform="rotate(270 100 100)" />
+                <path d="M100,100 Q60,20 100,10 Q140,20 100,100" fill="#fcfcfc" transform="rotate(315 100 100)" />
+                <ellipse cx="100" cy="100" rx="20" ry="10" fill="#fff" transform="rotate(22 100 100)"/>
+                <ellipse cx="100" cy="100" rx="20" ry="10" fill="#fff" transform="rotate(67 100 100)"/>
+                <ellipse cx="100" cy="100" rx="20" ry="10" fill="#fff" transform="rotate(112 100 100)"/>
+                <ellipse cx="100" cy="100" rx="20" ry="10" fill="#fff" transform="rotate(157 100 100)"/>
+                <circle cx="100" cy="100" r="8" fill="url(#centerGrad)" />
+            </g>
         </svg>
     </div>
 
-    <div class="draggable name-item" data-name="name" style="left: 50%; top: 50px; transform: translateX(-50%);">
+    <div class="draggable main-text" style="top: 45%; left: 50%; transform: translate(-50%, -50%);">
         Ali <span class="white-heart">🤍</span>
     </div>
 
-    <div class="draggable matcha-cup" data-name="matcha" style="left: 50%; top: 300px; transform: translateX(-50%);">
-        <div class="matcha-foam">
-            <div class="ali-letter">A</div>
-            <div class="ali-letter">l</div>
-            <div class="ali-letter">i</div>
-        </div>
+    <div class="draggable" style="top: 60%; left: 60%;">
+        <svg class="matcha-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <filter id="foamText" x="-10%" y="-10%" width="120%" height="120%">
+                     <feGaussianBlur in="SourceGraphic" stdDeviation="1.5" />
+                </filter>
+            </defs>
+            <circle cx="100" cy="100" r="95" fill="#e6e2d3" stroke="#dcd8c8" stroke-width="2"/>
+            <circle cx="100" cy="100" r="75" fill="#fcfaf2" stroke="#dcd8c8" stroke-width="1"/>
+            <circle cx="100" cy="100" r="68" fill="#e8e4d0"/>
+            <circle cx="100" cy="100" r="62" fill="#7a9645"/>
+            <circle cx="100" cy="100" r="58" fill="#8ba852"/>
+            
+            <g transform="translate(100, 100) scale(0.8)">
+                <text x="0" y="15" text-anchor="middle" font-family="'Great Vibes', cursive" font-size="60" fill="#fffef0" filter="url(#foamText)" opacity="0.9">Ali</text>
+                <text x="0" y="15" text-anchor="middle" font-family="'Great Vibes', cursive" font-size="60" fill="#fffef0">Ali</text>
+                <path d="M-5,35 C-20,25 -20,10 -5,10 C10,10 10,25 -5,35" fill="#fffef0" transform="translate(5, 5)"/>
+            </g>
+            <path d="M160,80 Q165,100 160,120" stroke="rgba(255,255,255,0.4)" stroke-width="4" fill="none"/>
+        </svg>
     </div>
 
     <script>
-        class DraggableElement {
-            constructor(element) {
-                this.element = element;
+        class PhysicsItem {
+            constructor(el) {
+                this.el = el;
+                this.x = parseFloat(el.style.left) || Math.random() * (window.innerWidth - 100);
+                this.y = parseFloat(el.style.top) || Math.random() * (window.innerHeight - 100);
+                
+                if (el.style.transform.includes('translate')) {
+                    const rect = el.getBoundingClientRect();
+                    this.x = rect.left;
+                    this.y = rect.top;
+                    el.style.transform = 'none';
+                }
+
+                this.vx = 0;
+                this.vy = 0;
+                this.lastX = this.x;
+                this.lastY = this.y;
                 this.isDragging = false;
-                this.currentX = 0;
-                this.currentY = 0;
-                this.velocityX = 0;
-                this.velocityY = 0;
-                this.lastX = 0;
-                this.lastY = 0;
-                this.animationFrame = null;
+                this.friction = 0.96;
+                this.bounce = 0.7;
                 
-                const rect = element.getBoundingClientRect();
-                this.currentX = rect.left;
-                this.currentY = rect.top;
-                
-                this.element.addEventListener('mousedown', this.onMouseDown.bind(this));
-                this.element.addEventListener('touchstart', this.onTouchStart.bind(this));
+                el.addEventListener('mousedown', (e) => this.startDrag(e.clientX, e.clientY));
+                window.addEventListener('mousemove', (e) => this.drag(e.clientX, e.clientY));
+                window.addEventListener('mouseup', () => this.endDrag());
+
+                el.addEventListener('touchstart', (e) => this.startDrag(e.touches[0].clientX, e.touches[0].clientY));
+                window.addEventListener('touchmove', (e) => this.drag(e.touches[0].clientX, e.touches[0].clientY));
+                window.addEventListener('touchend', () => this.endDrag());
+
+                this.animate();
             }
 
-            onMouseDown(e) {
-                this.startDrag(e.clientX, e.clientY);
-                document.addEventListener('mousemove', this.onMouseMove.bind(this));
-                document.addEventListener('mouseup', this.onMouseUp.bind(this));
-            }
-
-            onTouchStart(e) {
-                const touch = e.touches[0];
-                this.startDrag(touch.clientX, touch.clientY);
-                document.addEventListener('touchmove', this.onTouchMove.bind(this));
-                document.addEventListener('touchend', this.onTouchEnd.bind(this));
-                e.preventDefault();
-            }
-
-            startDrag(x, y) {
+            startDrag(inputX, inputY) {
                 this.isDragging = true;
-                const rect = this.element.getBoundingClientRect();
-                this.offsetX = x - rect.left;
-                this.offsetY = y - rect.top;
-                this.lastX = x;
-                this.lastY = y;
-                this.velocityX = 0;
-                this.velocityY = 0;
-                if (this.animationFrame) {
-                    cancelAnimationFrame(this.animationFrame);
-                }
+                this.offsetX = inputX - this.x;
+                this.offsetY = inputY - this.y;
+                this.vx = 0;
+                this.vy = 0;
+                this.lastX = inputX;
+                this.lastY = inputY;
             }
 
-            onMouseMove(e) {
+            drag(inputX, inputY) {
                 if (!this.isDragging) return;
-                this.drag(e.clientX, e.clientY);
-            }
-
-            onTouchMove(e) {
-                if (!this.isDragging) return;
-                const touch = e.touches[0];
-                this.drag(touch.clientX, touch.clientY);
-                e.preventDefault();
-            }
-
-            drag(x, y) {
-                this.velocityX = x - this.lastX;
-                this.velocityY = y - this.lastY;
                 
-                this.currentX = x - this.offsetX;
-                this.currentY = y - this.offsetY;
+                const currentX = inputX;
+                const currentY = inputY;
                 
-                this.element.style.left = this.currentX + 'px';
-                this.element.style.top = this.currentY + 'px';
-                this.element.style.transform = 'none';
+                this.vx = currentX - this.lastX;
+                this.vy = currentY - this.lastY;
                 
-                this.lastX = x;
-                this.lastY = y;
+                this.lastX = currentX;
+                this.lastY = currentY;
+
+                this.x = inputX - this.offsetX;
+                this.y = inputY - this.offsetY;
             }
 
-            onMouseUp() {
-                this.stopDrag();
-                document.removeEventListener('mousemove', this.onMouseMove.bind(this));
-                document.removeEventListener('mouseup', this.onMouseUp.bind(this));
-            }
-
-            onTouchEnd() {
-                this.stopDrag();
-                document.removeEventListener('touchmove', this.onTouchMove.bind(this));
-                document.removeEventListener('touchend', this.onTouchEnd.bind(this));
-            }
-
-            stopDrag() {
+            endDrag() {
                 this.isDragging = false;
-                this.applyPhysics();
             }
 
-            applyPhysics() {
-                const friction = 0.95;
-                const bounce = 0.7;
-                const minVelocity = 0.5;
-                
-                const animate = () => {
-                    this.velocityX *= friction;
-                    this.velocityY *= friction;
+            animate() {
+                if (!this.isDragging) {
+                    this.x += this.vx;
+                    this.y += this.vy;
+
+                    this.vx *= this.friction;
+                    this.vy *= this.friction;
+
+                    const rect = this.el.getBoundingClientRect();
+                    const maxX = window.innerWidth - rect.width;
+                    const maxY = window.innerHeight - rect.height;
+
+                    if (this.x < 0) { this.x = 0; this.vx *= -this.bounce; }
+                    if (this.x > maxX) { this.x = maxX; this.vx *= -this.bounce; }
+                    if (this.y < 0) { this.y = 0; this.vy *= -this.bounce; }
+                    if (this.y > maxY) { this.y = maxY; this.vy *= -this.bounce; }
                     
-                    this.currentX += this.velocityX;
-                    this.currentY += this.velocityY;
-                    
-                    const rect = this.element.getBoundingClientRect();
-                    const width = rect.width;
-                    const height = rect.height;
-                    
-                    if (this.currentX < 0) {
-                        this.currentX = 0;
-                        this.velocityX *= -bounce;
-                    }
-                    if (this.currentX + width > window.innerWidth) {
-                        this.currentX = window.innerWidth - width;
-                        this.velocityX *= -bounce;
-                    }
-                    if (this.currentY < 0) {
-                        this.currentY = 0;
-                        this.velocityY *= -bounce;
-                    }
-                    if (this.currentY + height > window.innerHeight) {
-                        this.currentY = window.innerHeight - height;
-                        this.velocityY *= -bounce;
-                    }
-                    
-                    this.element.style.left = this.currentX + 'px';
-                    this.element.style.top = this.currentY + 'px';
-                    this.element.style.transform = 'none';
-                    
-                    if (Math.abs(this.velocityX) > minVelocity || Math.abs(this.velocityY) > minVelocity) {
-                        this.animationFrame = requestAnimationFrame(animate);
-                    }
-                };
-                
-                if (Math.abs(this.velocityX) > minVelocity || Math.abs(this.velocityY) > minVelocity) {
-                    this.animationFrame = requestAnimationFrame(animate);
+                    if (Math.abs(this.vx) < 0.1) this.vx = 0;
+                    if (Math.abs(this.vy) < 0.1) this.vy = 0;
                 }
+
+                this.el.style.left = this.x + 'px';
+                this.el.style.top = this.y + 'px';
+
+                requestAnimationFrame(() => this.animate());
             }
         }
 
-        document.querySelectorAll('.draggable').forEach(element => {
-            new DraggableElement(element);
-        });
-    </script>
+        document.querySelectorAll('.draggable').forEach(el => new PhysicsItem(el));
 
+    </script>
 </body>
 </html>

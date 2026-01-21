@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Para Ali 🤍</title>
-    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;1,500&family=Great+Vibes&display=swap" rel="stylesheet">
+    <title>Sampaguitas para Ali</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/brython@3.12.0/brython.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/brython@3.12.0/brython_stdlib.js"></script>
     
     <style>
         :root {
@@ -82,164 +84,253 @@
         }
     </style>
 </head>
-<body>
+<body onload="brython()">
+    <div class="container">
+        <h1>🌼 Sampaguitas para Ali</h1>
+        
+        <div class="controls">
+            <button class="btn btn-primary" onclick="startDrawing()">🌼 Dibujar</button>
+            <button class="btn btn-secondary" onclick="pauseDrawing()">⏸️ Pausar</button>
+            <button class="btn btn-reset" onclick="resetDrawing()">🔄 Reiniciar</button>
+            <button class="btn btn-special" onclick="drawAliAndHeart()">💕 Ali</button>
+        </div>
 
-    <div class="draggable" style="top: 10%; left: 10%;">
-        <svg class="flower-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-                <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
-                    <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
-                    <feOffset dx="2" dy="2" result="offsetblur"/>
-                    <feComponentTransfer>
-                        <feFuncA type="linear" slope="0.3"/>
-                    </feComponentTransfer>
-                    <feMerge> 
-                        <feMergeNode/>
-                        <feMergeNode in="SourceGraphic"/> 
-                    </feMerge>
-                </filter>
-                <radialGradient id="centerGrad" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
-                    <stop offset="0%" style="stop-color:#ffeda3;stop-opacity:1" />
-                    <stop offset="100%" style="stop-color:#ffd700;stop-opacity:1" />
-                </radialGradient>
-            </defs>
-            <g filter="url(#softShadow)">
-                <path d="M100,100 Q60,20 100,10 Q140,20 100,100" fill="#fffdf5" transform="rotate(0 100 100)" />
-                <path d="M100,100 Q60,20 100,10 Q140,20 100,100" fill="#fffdf5" transform="rotate(45 100 100)" />
-                <path d="M100,100 Q60,20 100,10 Q140,20 100,100" fill="#fcfcfc" transform="rotate(90 100 100)" />
-                <path d="M100,100 Q60,20 100,10 Q140,20 100,100" fill="#ffffff" transform="rotate(135 100 100)" />
-                <path d="M100,100 Q60,20 100,10 Q140,20 100,100" fill="#fffdf5" transform="rotate(180 100 100)" />
-                <path d="M100,100 Q60,20 100,10 Q140,20 100,100" fill="#f0f0f0" transform="rotate(225 100 100)" />
-                <path d="M100,100 Q60,20 100,10 Q140,20 100,100" fill="#ffffff" transform="rotate(270 100 100)" />
-                <path d="M100,100 Q60,20 100,10 Q140,20 100,100" fill="#fcfcfc" transform="rotate(315 100 100)" />
-                <ellipse cx="100" cy="100" rx="20" ry="10" fill="#fff" transform="rotate(22 100 100)"/>
-                <ellipse cx="100" cy="100" rx="20" ry="10" fill="#fff" transform="rotate(67 100 100)"/>
-                <ellipse cx="100" cy="100" rx="20" ry="10" fill="#fff" transform="rotate(112 100 100)"/>
-                <ellipse cx="100" cy="100" rx="20" ry="10" fill="#fff" transform="rotate(157 100 100)"/>
-                <circle cx="100" cy="100" r="8" fill="url(#centerGrad)" />
-            </g>
-        </svg>
+        <div class="speed-control">
+            <label for="speed">Velocidad:</label>
+            <input type="range" id="speed" min="1" max="10" value="5" onchange="updateSpeed()">
+            <span class="speed-value" id="speedValue">5</span>
+        </div>
+
+        <div class="status" id="status">Cargando datos...</div>
+
+        <div class="canvas-container">
+            <canvas id="turtleCanvas" width="800" height="600"></canvas>
+        </div>
     </div>
 
-    <div class="draggable main-text" style="top: 45%; left: 50%; transform: translate(-50%, -50%);">
-        Ali <span class="white-heart">🤍</span>
-    </div>
+    <script type="text/python">
+        from browser import document, window
+        from browser.timer import set_timeout, clear_timeout
+        import json
 
-    <div class="draggable" style="top: 60%; left: 60%;">
-        <svg class="matcha-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-                <filter id="foamText" x="-10%" y="-10%" width="120%" height="120%">
-                     <feGaussianBlur in="SourceGraphic" stdDeviation="1.5" />
-                </filter>
-            </defs>
-            <circle cx="100" cy="100" r="95" fill="#e6e2d3" stroke="#dcd8c8" stroke-width="2"/>
-            <circle cx="100" cy="100" r="75" fill="#fcfaf2" stroke="#dcd8c8" stroke-width="1"/>
-            <circle cx="100" cy="100" r="68" fill="#e8e4d0"/>
-            <circle cx="100" cy="100" r="62" fill="#7a9645"/>
-            <circle cx="100" cy="100" r="58" fill="#8ba852"/>
+        turtle_data = None
+        drawing_active = False
+        current_shape = 0
+        drawing_timeout = None
+        turtle_speed = 5
+
+        canvas = document['turtleCanvas']
+        ctx = canvas.getContext('2d')
+        canvas_width = 800
+        canvas_height = 600
+
+        turtle_x = canvas_width // 2
+        turtle_y = canvas_height // 2
+        turtle_pen_down = True
+
+        def clear_canvas():
+            ctx.clearRect(0, 0, canvas_width, canvas_height)
+            ctx.fillStyle = '#fcfaf2'
+            ctx.fillRect(0, 0, canvas_width, canvas_height)
+
+        def set_color(r, g, b):
+            ctx.strokeStyle = f'rgb({int(r*255)}, {int(g*255)}, {int(b*255)})'
+            ctx.fillStyle = f'rgb({int(r*255)}, {int(g*255)}, {int(b*255)})'
+            ctx.lineWidth = 1
+
+        def pen_up():
+            global turtle_pen_down
+            turtle_pen_down = False
+
+        def pen_down():
+            global turtle_pen_down
+            turtle_pen_down = True
+
+        def goto(x, y):
+            global turtle_x, turtle_y
             
-            <g transform="translate(100, 100) scale(0.8)">
-                <text x="0" y="15" text-anchor="middle" font-family="'Great Vibes', cursive" font-size="60" fill="#fffef0" filter="url(#foamText)" opacity="0.9">Ali</text>
-                <text x="0" y="15" text-anchor="middle" font-family="'Great Vibes', cursive" font-size="60" fill="#fffef0">Ali</text>
-                <path d="M-5,35 C-20,25 -20,10 -5,10 C10,10 10,25 -5,35" fill="#fffef0" transform="translate(5, 5)"/>
-            </g>
-            <path d="M160,80 Q165,100 160,120" stroke="rgba(255,255,255,0.4)" stroke-width="4" fill="none"/>
-        </svg>
-    </div>
+            scale_factor = min(canvas_width, canvas_height) / 800
+            scaled_x = canvas_width // 2 + x * scale_factor * 0.8
+            scaled_y = canvas_height // 2 + y * scale_factor * 0.8
+            
+            if turtle_pen_down:
+                ctx.lineTo(scaled_x, scaled_y)
+            
+            turtle_x = scaled_x
+            turtle_y = scaled_y
 
-    <script>
-        class PhysicsItem {
-            constructor(el) {
-                this.el = el;
-                this.x = parseFloat(el.style.left) || Math.random() * (window.innerWidth - 100);
-                this.y = parseFloat(el.style.top) || Math.random() * (window.innerHeight - 100);
+        def begin_fill():
+            ctx.beginPath()
+            global first_point
+            first_point = (turtle_x, turtle_y)
+
+        def end_fill():
+            if 'first_point' in globals():
+                ctx.lineTo(first_point[0], first_point[1])
+            ctx.fill()
+
+        def load_data():
+            global turtle_data
+            try:
+                import urllib.request
+                response = urllib.request.urlopen('./assets/sampaguita_data.json')
+                data = response.read()
+                if isinstance(data, bytes):
+                    data = data.decode('utf-8')
+                turtle_data = json.loads(data)
+                document['status'].textContent = "Listo para dibujar 🌼"
+                return True
+            except Exception as e:
+                document['status'].textContent = f"Error: {str(e)}"
+                return False
+
+        def draw_next():
+            global current_shape, drawing_active, drawing_timeout
+            
+            try:
+                if not drawing_active or not turtle_data:
+                    return
                 
-                if (el.style.transform.includes('translate')) {
-                    const rect = el.getBoundingClientRect();
-                    this.x = rect.left;
-                    this.y = rect.top;
-                    el.style.transform = 'none';
-                }
-
-                this.vx = 0;
-                this.vy = 0;
-                this.lastX = this.x;
-                this.lastY = this.y;
-                this.isDragging = false;
-                this.friction = 0.96;
-                this.bounce = 0.7;
+                if current_shape >= len(turtle_data["coordenadas"]):
+                    drawing_active = False
+                    status_element = document['status']
+                    status_element.textContent = "¡Dibujado! 🌼💕"
+                    status_element.className = 'status completed'
+                    return
                 
-                el.addEventListener('mousedown', (e) => this.startDrag(e.clientX, e.clientY));
-                window.addEventListener('mousemove', (e) => this.drag(e.clientX, e.clientY));
-                window.addEventListener('mouseup', () => this.endDrag());
-
-                el.addEventListener('touchstart', (e) => this.startDrag(e.touches[0].clientX, e.touches[0].clientY));
-                window.addEventListener('touchmove', (e) => this.drag(e.touches[0].clientX, e.touches[0].clientY));
-                window.addEventListener('touchend', () => this.endDrag());
-
-                this.animate();
-            }
-
-            startDrag(inputX, inputY) {
-                this.isDragging = true;
-                this.offsetX = inputX - this.x;
-                this.offsetY = inputY - this.y;
-                this.vx = 0;
-                this.vy = 0;
-                this.lastX = inputX;
-                this.lastY = inputY;
-            }
-
-            drag(inputX, inputY) {
-                if (!this.isDragging) return;
+                shape = turtle_data["coordenadas"][current_shape]
+                color = turtle_data["color"][current_shape]
                 
-                const currentX = inputX;
-                const currentY = inputY;
+                progress_percentage = int(((current_shape + 1) / len(turtle_data['coordenadas'])) * 100)
+                document['status'].textContent = f"Dibujando... {progress_percentage}% 🌼"
                 
-                this.vx = currentX - this.lastX;
-                this.vy = currentY - this.lastY;
+                set_color(color[0], color[1], color[2])
+                begin_fill()
                 
-                this.lastX = currentX;
-                this.lastY = currentY;
-
-                this.x = inputX - this.offsetX;
-                this.y = inputY - this.offsetY;
-            }
-
-            endDrag() {
-                this.isDragging = false;
-            }
-
-            animate() {
-                if (!this.isDragging) {
-                    this.x += this.vx;
-                    this.y += this.vy;
-
-                    this.vx *= this.friction;
-                    this.vy *= this.friction;
-
-                    const rect = this.el.getBoundingClientRect();
-                    const maxX = window.innerWidth - rect.width;
-                    const maxY = window.innerHeight - rect.height;
-
-                    if (this.x < 0) { this.x = 0; this.vx *= -this.bounce; }
-                    if (this.x > maxX) { this.x = maxX; this.vx *= -this.bounce; }
-                    if (this.y < 0) { this.y = 0; this.vy *= -this.bounce; }
-                    if (this.y > maxY) { this.y = maxY; this.vy *= -this.bounce; }
+                pen_up()
+                goto(shape[0][0], shape[0][1])
+                pen_down()
+                
+                ctx.moveTo(turtle_x, turtle_y)
+                
+                for i in range(1, len(shape)):
+                    goto(shape[i][0], shape[i][1])
+                
+                end_fill()
+                current_shape += 1
+                
+                if drawing_active:
+                    delay = max(5, 50 - turtle_speed * 5)
+                    drawing_timeout = set_timeout(draw_next, delay)
                     
-                    if (Math.abs(this.vx) < 0.1) this.vx = 0;
-                    if (Math.abs(this.vy) < 0.1) this.vy = 0;
-                }
+            except Exception as e:
+                document['status'].textContent = f"Error en dibujo: {str(e)}"
+                drawing_active = False
 
-                this.el.style.left = this.x + 'px';
-                this.el.style.top = this.y + 'px';
+        def start_drawing():
+            global drawing_active, current_shape, drawing_timeout
+            
+            if not turtle_data:
+                if not load_data():
+                    return
+            
+            if drawing_timeout:
+                clear_timeout(drawing_timeout)
+            
+            drawing_active = True
+            current_shape = 0
+            clear_canvas()
+            document['status'].textContent = f"Dibujando {len(turtle_data['coordenadas'])} sampaguitas..."
+            draw_next()
 
-                requestAnimationFrame(() => this.animate());
-            }
-        }
+        def pause_drawing():
+            global drawing_active, drawing_timeout
+            drawing_active = False
+            if drawing_timeout:
+                clear_timeout(drawing_timeout)
+            document['status'].textContent = "Dibujo pausado 🌼"
 
-        document.querySelectorAll('.draggable').forEach(el => new PhysicsItem(el));
+        def reset_drawing():
+            global drawing_active, current_shape, drawing_timeout
+            drawing_active = False
+            if drawing_timeout:
+                clear_timeout(drawing_timeout)
+            current_shape = 0
+            clear_canvas()
+            document['status'].textContent = "Listo para dibujar sampaguitas 🌼"
 
+        def update_speed():
+            global turtle_speed
+            speed_element = document['speed']
+            speed_value_element = document['speedValue']
+            turtle_speed = int(speed_element.value)
+            speed_value_element.textContent = str(turtle_speed)
+
+        def draw_ali_and_heart():
+            global drawing_active, drawing_timeout
+            drawing_active = False
+            if drawing_timeout:
+                clear_timeout(drawing_timeout)
+            
+            clear_canvas()
+            document['status'].textContent = "Dibujando Ali y corazón 💕"
+            
+            try:
+                import urllib.request
+                
+                response_ali = urllib.request.urlopen('./assets/ali_data.json')
+                data_ali = response_ali.read()
+                if isinstance(data_ali, bytes):
+                    data_ali = data_ali.decode('utf-8')
+                ali_data = json.loads(data_ali)
+                
+                for i, shape in enumerate(ali_data["coordenadas"]):
+                    color = ali_data["color"][i]
+                    set_color(color[0], color[1], color[2])
+                    begin_fill()
+                    pen_up()
+                    goto(shape[0][0], shape[0][1])
+                    pen_down()
+                    ctx.moveTo(turtle_x, turtle_y)
+                    for j in range(1, len(shape)):
+                        goto(shape[j][0], shape[j][1])
+                    end_fill()
+                
+                response_heart = urllib.request.urlopen('./assets/heart_data.json')
+                data_heart = response_heart.read()
+                if isinstance(data_heart, bytes):
+                    data_heart = data_heart.decode('utf-8')
+                heart_data = json.loads(data_heart)
+                
+                for i, shape in enumerate(heart_data["coordenadas"]):
+                    color = heart_data["color"][i]
+                    set_color(color[0], color[1], color[2])
+                    begin_fill()
+                    pen_up()
+                    goto(shape[0][0] + 150, shape[0][1])
+                    pen_down()
+                    ctx.moveTo(turtle_x, turtle_y)
+                    for j in range(1, len(shape)):
+                        goto(shape[j][0] + 150, shape[j][1])
+                    end_fill()
+                
+                status_element = document['status']
+                status_element.textContent = "¡Ali y corazón dibujados! 💕🤍"
+                status_element.className = 'status completed'
+                
+            except Exception as e:
+                document['status'].textContent = f"Error: {str(e)}"
+
+        window.startDrawing = start_drawing
+        window.pauseDrawing = pause_drawing
+        window.resetDrawing = reset_drawing
+        window.updateSpeed = update_speed
+        window.drawAliAndHeart = draw_ali_and_heart
+
+        clear_canvas()
+        document['status'].textContent = "Cargando datos..."
+        load_data()
     </script>
+    
 </body>
 </html>

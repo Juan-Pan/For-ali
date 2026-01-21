@@ -3,458 +3,226 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌼 Sampaguitas para Ali</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/brython@3.12.0/brython.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/brython@3.12.0/brython_stdlib.js"></script>
+    <title>Para Ali 🤍</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500&family=Pacifico&display=swap" rel="stylesheet">
     
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --bg-color: #fcfaf2;
+            --matcha-dark: #5e7d2f;
+            --matcha-light: #9dbb64;
+            --matcha-foam: #eaf5d6;
+            --flower-white: #fffcf5;
+            --flower-shadow: #e6e2d8;
+            --stroke-color: #4a4a4a;
         }
 
         body {
-            font-family: 'Outfit', sans-serif;
-            background: linear-gradient(135deg, #fff9f0 0%, #fffef8 50%, #ffffff 100%);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            width: 100vw;
+            background-color: var(--bg-color);
+            overflow: hidden;
+            position: relative;
+            background-image: radial-gradient(#e0ded5 1px, transparent 1px);
+            background-size: 30px 30px;
         }
 
-        .container {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(163, 177, 138, 0.2);
-            border-radius: 25px;
-            padding: 30px;
-            margin: 40px 20px;
-            box-shadow: 0 8px 32px rgba(74, 93, 35, 0.1);
-            max-width: 900px;
-            width: 95%;
+        .draggable {
+            position: absolute;
+            cursor: grab;
+            user-select: none;
+            touch-action: none;
+            filter: drop-shadow(0 15px 10px rgba(0,0,0,0.1));
+            transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        h1 {
-            font-family: 'Outfit', sans-serif;
-            font-weight: 700;
-            text-align: center;
-            color: #4a5d23;
-            margin-bottom: 30px;
-            font-size: 2.5em;
-            text-shadow: 0 2px 4px rgba(163, 177, 138, 0.3);
-            letter-spacing: 1px;
+        .draggable:active {
+            cursor: grabbing;
+            transform: scale(1.1) !important;
+            z-index: 100;
         }
 
-        .controls {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 25px;
-            flex-wrap: wrap;
+        .svg-drawing {
+            width: 100%;
+            height: 100%;
+            overflow: visible;
         }
 
-        .btn {
-            font-family: 'Outfit', sans-serif;
-            font-weight: 700;
-            padding: 15px 30px;
-            font-size: 15px;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            min-width: 140px;
+        @keyframes float-foam {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(2px, 3px); }
+        }
+        
+        .foam-art {
+            animation: float-foam 6s ease-in-out infinite;
         }
 
-        .btn-primary {
-            background: linear-gradient(45deg, #a3b18a, #7a9645);
-            color: white;
-            box-shadow: 0 4px 15px rgba(122, 150, 69, 0.3);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(122, 150, 69, 0.4);
-        }
-
-        .btn-secondary {
-            background: linear-gradient(45deg, #8ba852, #6b8e3e);
-            color: white;
-            box-shadow: 0 4px 15px rgba(107, 142, 62, 0.3);
-        }
-
-        .btn-secondary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(107, 142, 62, 0.4);
-        }
-
-        .btn-reset {
-            background: linear-gradient(45deg, #9db89d, #7a9a7a);
-            color: white;
-            box-shadow: 0 4px 15px rgba(157, 184, 157, 0.3);
-        }
-
-        .btn-reset:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(157, 184, 157, 0.4);
-        }
-
-        .btn-special {
-            background: linear-gradient(45deg, #ffffff, #f5f5f5);
-            color: #4a5d23;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            border: 2px solid #a3b18a;
-        }
-
-        .btn-special:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-        }
-
-        .speed-control {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin: 20px 0;
-            padding: 20px;
-            background: rgba(163, 177, 138, 0.1);
-            border-radius: 15px;
-            border: 1px solid rgba(163, 177, 138, 0.2);
-        }
-
-        .speed-control label {
-            font-family: 'Outfit', sans-serif;
-            font-weight: 600;
-            color: #4a5d23;
-            font-size: 15px;
-        }
-
-        .speed-control input[type="range"] {
-            flex: 1;
-            height: 6px;
-            border-radius: 3px;
-            background: rgba(163, 177, 138, 0.3);
-            outline: none;
-        }
-
-        .speed-value {
-            font-family: 'Outfit', sans-serif;
-            color: #4a5d23;
-            font-weight: 700;
-            font-size: 18px;
-            min-width: 30px;
-            text-align: center;
-        }
-
-        .status {
-            font-family: 'Outfit', sans-serif;
-            text-align: center;
-            margin: 20px 0;
-            padding: 15px;
-            background: rgba(163, 177, 138, 0.1);
-            border-radius: 15px;
-            color: #4a5d23;
-            font-weight: 600;
-            border: 1px solid rgba(163, 177, 138, 0.2);
-        }
-
-        .status.completed {
-            background: rgba(163, 177, 138, 0.2);
-            border-color: rgba(122, 150, 69, 0.4);
-        }
-
-        .canvas-container {
-            display: flex;
-            justify-content: center;
-            margin: 20px 0;
-            padding: 20px;
-            background: #ffffff;
-            border-radius: 20px;
-            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.05);
-        }
-
-        #turtleCanvas {
-            border: 2px solid rgba(163, 177, 138, 0.3);
-            border-radius: 15px;
-            background: #ffffff;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                margin: 20px 10px;
-                padding: 20px;
-            }
-
-            h1 {
-                font-size: 2em;
-                margin-bottom: 20px;
-            }
-
-            .btn {
-                min-width: 100px;
-                padding: 12px 20px;
-                font-size: 13px;
-            }
-
-            #turtleCanvas {
-                width: 100%;
-                height: auto;
-                aspect-ratio: 4/3;
-            }
-        }
     </style>
 </head>
-<body onload="brython()">
-    <div class="container">
-        <h1>🌼 Sampaguitas para Ali</h1>
-        
-        <div class="controls">
-            <button class="btn btn-primary" onclick="startDrawing()">🌼 Dibujar</button>
-            <button class="btn btn-secondary" onclick="pauseDrawing()">⏸️ Pausar</button>
-            <button class="btn btn-reset" onclick="resetDrawing()">🔄 Reiniciar</button>
-            <button class="btn btn-special" onclick="drawAliAndHeart()">💕 Ali</button>
-        </div>
+<body>
 
-        <div class="speed-control">
-            <label for="speed">Velocidad:</label>
-            <input type="range" id="speed" min="1" max="10" value="5" onchange="updateSpeed()">
-            <span class="speed-value" id="speedValue">5</span>
-        </div>
+    <div class="draggable" style="width: 300px; height: 300px; left: 10%; top: 10%;">
+        <svg class="svg-drawing" viewBox="0 0 300 300">
+            <defs>
+                <filter id="inset-shadow">
+                    <feOffset dx="0" dy="4"/>
+                    <feGaussianBlur stdDeviation="4" result="offset-blur"/>
+                    <feComposite operator="out" in="SourceGraphic" in2="offset-blur" result="inverse"/>
+                    <feFlood flood-color="black" flood-opacity="0.1" result="color"/>
+                    <feComposite operator="in" in="color" in2="inverse" result="shadow"/>
+                    <feComposite operator="over" in="shadow" in2="SourceGraphic"/>
+                </filter>
+            </defs>
 
-        <div class="status" id="status">Cargando datos...</div>
+            <g transform="translate(150, 150)" stroke="#5c5c5c" stroke-width="2" stroke-linejoin="round">
+                <path d="M0,0 C-40,-50 -60,-110 0,-130 C60,-110 40,-50 0,0" fill="#f7f5eb" transform="rotate(0)"/>
+                <path d="M0,0 C-40,-50 -60,-110 0,-130 C60,-110 40,-50 0,0" fill="#f7f5eb" transform="rotate(72)"/>
+                <path d="M0,0 C-40,-50 -60,-110 0,-130 C60,-110 40,-50 0,0" fill="#f7f5eb" transform="rotate(144)"/>
+                <path d="M0,0 C-40,-50 -60,-110 0,-130 C60,-110 40,-50 0,0" fill="#f7f5eb" transform="rotate(216)"/>
+                <path d="M0,0 C-40,-50 -60,-110 0,-130 C60,-110 40,-50 0,0" fill="#f7f5eb" transform="rotate(288)"/>
+                
+                <path d="M0,0 C-30,-40 -50,-90 0,-110 C50,-90 30,-40 0,0" fill="#fff" transform="rotate(36)"/>
+                <path d="M0,0 C-30,-40 -50,-90 0,-110 C50,-90 30,-40 0,0" fill="#fff" transform="rotate(108)"/>
+                <path d="M0,0 C-30,-40 -50,-90 0,-110 C50,-90 30,-40 0,0" fill="#fff" transform="rotate(180)"/>
+                <path d="M0,0 C-30,-40 -50,-90 0,-110 C50,-90 30,-40 0,0" fill="#fff" transform="rotate(252)"/>
+                <path d="M0,0 C-30,-40 -50,-90 0,-110 C50,-90 30,-40 0,0" fill="#fff" transform="rotate(324)"/>
 
-        <div class="canvas-container">
-            <canvas id="turtleCanvas" width="800" height="600"></canvas>
-        </div>
+                <circle r="15" fill="#ffe066" stroke="none"/>
+                <circle r="15" fill="none" stroke="#e6c200" stroke-width="2" stroke-dasharray="2 4"/>
+            </g>
+        </svg>
     </div>
 
-    <script type="text/python">
-        from browser import document, window
-        from browser.timer import set_timeout, clear_timeout
-        import json
+    <div class="draggable" style="left: 50%; top: 40%; transform: translate(-50%, -50%); z-index: 5;">
+        <h1 style="
+            font-family: 'Lora', serif; 
+            font-size: 4rem; 
+            color: #4a5d23; 
+            margin: 0;
+            text-shadow: 2px 2px 0px rgba(255,255,255,0.5);">
+            Ali <span style="font-size: 3rem; color: #a3b18a;">🌿</span>
+        </h1>
+    </div>
 
-        turtle_data = None
-        drawing_active = False
-        current_shape = 0
-        drawing_timeout = None
-        turtle_speed = 5
+    <div class="draggable" style="width: 280px; height: 280px; left: 60%; top: 50%;">
+        <svg class="svg-drawing" viewBox="0 0 250 250">
+            <ellipse cx="125" cy="125" rx="110" ry="110" fill="rgba(0,0,0,0.1)"/>
 
-        canvas = document['turtleCanvas']
-        ctx = canvas.getContext('2d')
-        canvas_width = 800
-        canvas_height = 600
-
-        turtle_x = canvas_width // 2
-        turtle_y = canvas_height // 2
-        turtle_pen_down = True
-
-        def clear_canvas():
-            ctx.clearRect(0, 0, canvas_width, canvas_height)
-            ctx.fillStyle = '#ffffff'
-            ctx.fillRect(0, 0, canvas_width, canvas_height)
-
-        def set_color(r, g, b):
-            ctx.strokeStyle = f'rgb({int(r*255)}, {int(g*255)}, {int(b*255)})'
-            ctx.fillStyle = f'rgb({int(r*255)}, {int(g*255)}, {int(b*255)})'
-            ctx.lineWidth = 2
-
-        def pen_up():
-            global turtle_pen_down
-            turtle_pen_down = False
-
-        def pen_down():
-            global turtle_pen_down
-            turtle_pen_down = True
-
-        def goto(x, y):
-            global turtle_x, turtle_y
+            <circle cx="125" cy="125" r="115" fill="#f0ebd8" stroke="#5c5c5c" stroke-width="3"/>
             
-            scale_factor = min(canvas_width, canvas_height) / 600
-            scaled_x = canvas_width // 2 + x * scale_factor
-            scaled_y = canvas_height // 2 + y * scale_factor
+            <circle cx="125" cy="125" r="95" fill="#fff" stroke="#5c5c5c" stroke-width="3"/>
             
-            if turtle_pen_down:
-                ctx.lineTo(scaled_x, scaled_y)
-            
-            turtle_x = scaled_x
-            turtle_y = scaled_y
+            <circle cx="125" cy="125" r="85" fill="#7a9645" stroke="none"/>
+            <circle cx="125" cy="125" r="85" fill="none" stroke="#5e7d2f" stroke-width="4" opacity="0.3"/>
 
-        def begin_fill():
-            ctx.beginPath()
-            global first_point
-            first_point = (turtle_x, turtle_y)
+            <g class="foam-art">
+                <path d="M80,125 Q60,100 80,80 Q100,60 125,80 Q150,60 170,80 Q190,100 170,125 Q190,150 170,170 Q150,190 125,170 Q100,190 80,170 Q60,150 80,125" 
+                      fill="#eaf5d6" opacity="0.8"/>
+                
+                <text x="125" y="135" 
+                      text-anchor="middle" 
+                      dominant-baseline="middle" 
+                      font-family="'Pacifico', cursive" 
+                      font-size="65" 
+                      fill="#f7ffe0"
+                      stroke="#7a9645"
+                      stroke-width="1"
+                      transform="rotate(-5 125 125)">
+                    Ali
+                </text>
+                
+                <path d="M145,105 C155,100 160,110 145,120 C130,110 135,100 145,105" fill="#fff" transform="translate(10, -10)"/>
+            </g>
 
-        def end_fill():
-            if 'first_point' in globals():
-                ctx.lineTo(first_point[0], first_point[1])
-            ctx.fill()
+            <path d="M180,70 Q190,90 185,110" fill="none" stroke="white" stroke-width="5" stroke-linecap="round" opacity="0.6"/>
+            <path d="M70,150 Q60,130 65,110" fill="none" stroke="rgba(0,0,0,0.1)" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+    </div>
 
-        def load_data():
-            global turtle_data
-            try:
-                import urllib.request
-                response = urllib.request.urlopen('./assets/sampaguita_data.json')
-                data = response.read()
-                if isinstance(data, bytes):
-                    data = data.decode('utf-8')
-                turtle_data = json.loads(data)
-                document['status'].textContent = "Listo para dibujar"
-                return True
-            except Exception as e:
-                document['status'].textContent = f"Error: {str(e)}"
-                return False
+    <script>
+        class Interactable {
+            constructor(el) {
+                this.el = el;
+                this.x = this.parsePos(el.style.left, window.innerWidth);
+                this.y = this.parsePos(el.style.top, window.innerHeight);
+                
+                this.vx = (Math.random() - 0.5) * 2;
+                this.vy = (Math.random() - 0.5) * 2;
+                
+                this.isDragging = false;
+                this.friction = 0.95;
+                this.bounce = 0.6;
+                
+                el.addEventListener('mousedown', e => this.start(e.clientX, e.clientY));
+                window.addEventListener('mousemove', e => this.move(e.clientX, e.clientY));
+                window.addEventListener('mouseup', () => this.end());
 
-        def draw_next():
-            global current_shape, drawing_active, drawing_timeout
-            
-            try:
-                if not drawing_active or not turtle_data:
-                    return
-                
-                if current_shape >= len(turtle_data["coordenadas"]):
-                    drawing_active = False
-                    status_element = document['status']
-                    status_element.textContent = "Dibujado"
-                    status_element.className = 'status completed'
-                    return
-                
-                shape = turtle_data["coordenadas"][current_shape]
-                color = turtle_data["color"][current_shape]
-                
-                progress_percentage = int(((current_shape + 1) / len(turtle_data['coordenadas'])) * 100)
-                document['status'].textContent = f"Dibujando... {progress_percentage}% "
-                
-                set_color(color[0], color[1], color[2])
-                begin_fill()
-                
-                pen_up()
-                goto(shape[0][0], shape[0][1])
-                pen_down()
-                
-                ctx.moveTo(turtle_x, turtle_y)
-                
-                for i in range(1, len(shape)):
-                    goto(shape[i][0], shape[i][1])
-                
-                end_fill()
-                current_shape += 1
-                
-                if drawing_active:
-                    delay = max(5, 50 - turtle_speed * 5)
-                    drawing_timeout = set_timeout(draw_next, delay)
-                    
-            except Exception as e:
-                document['status'].textContent = f"Error en dibujo: {str(e)}"
-                drawing_active = False
+                el.addEventListener('touchstart', e => this.start(e.touches[0].clientX, e.touches[0].clientY));
+                window.addEventListener('touchmove', e => {
+                    if(this.isDragging) e.preventDefault(); 
+                    this.move(e.touches[0].clientX, e.touches[0].clientY)
+                }, {passive: false});
+                window.addEventListener('touchend', () => this.end());
 
-        def start_drawing():
-            global drawing_active, current_shape, drawing_timeout
-            
-            if not turtle_data:
-                if not load_data():
-                    return
-            
-            if drawing_timeout:
-                clear_timeout(drawing_timeout)
-            
-            drawing_active = True
-            current_shape = 0
-            clear_canvas()
-            document['status'].textContent = f"Dibujando {len(turtle_data['coordenadas'])} sampaguitas..."
-            draw_next()
+                this.animate();
+            }
 
-        def pause_drawing():
-            global drawing_active, drawing_timeout
-            drawing_active = False
-            if drawing_timeout:
-                clear_timeout(drawing_timeout)
-            document['status'].textContent = "Dibujo pausado "
+            parsePos(val, max) {
+                if (val.includes('%')) return (parseFloat(val) / 100) * max;
+                return parseFloat(val) || 0;
+            }
 
-        def reset_drawing():
-            global drawing_active, current_shape, drawing_timeout
-            drawing_active = False
-            if drawing_timeout:
-                clear_timeout(drawing_timeout)
-            current_shape = 0
-            clear_canvas()
-            document['status'].textContent = "Listo para dibujar sampaguitas "
+            start(x, y) {
+                this.isDragging = true;
+                this.offsetX = x - this.x;
+                this.offsetY = y - this.y;
+                this.vx = 0; this.vy = 0;
+                this.lastX = x; this.lastY = y;
+            }
 
-        def update_speed():
-            global turtle_speed
-            speed_element = document['speed']
-            speed_value_element = document['speedValue']
-            turtle_speed = int(speed_element.value)
-            speed_value_element.textContent = str(turtle_speed)
+            move(x, y) {
+                if (!this.isDragging) return;
+                this.x = x - this.offsetX;
+                this.y = y - this.offsetY;
+                
+                this.vx = x - this.lastX;
+                this.vy = y - this.lastY;
+                this.lastX = x; this.lastY = y;
+            }
 
-        def draw_ali_and_heart():
-            global drawing_active, drawing_timeout
-            drawing_active = False
-            if drawing_timeout:
-                clear_timeout(drawing_timeout)
-            
-            clear_canvas()
-            document['status'].textContent = "Dibujando Ali y corazón "
-            
-            try:
-                import urllib.request
-                
-                response_ali = urllib.request.urlopen('./assets/ali_data.json')
-                data_ali = response_ali.read()
-                if isinstance(data_ali, bytes):
-                    data_ali = data_ali.decode('utf-8')
-                ali_data = json.loads(data_ali)
-                
-                for i, shape in enumerate(ali_data["coordenadas"]):
-                    color = ali_data["color"][i]
-                    set_color(color[0], color[1], color[2])
-                    begin_fill()
-                    pen_up()
-                    goto(shape[0][0], shape[0][1])
-                    pen_down()
-                    ctx.moveTo(turtle_x, turtle_y)
-                    for j in range(1, len(shape)):
-                        goto(shape[j][0], shape[j][1])
-                    end_fill()
-                
-                response_heart = urllib.request.urlopen('./assets/heart_data.json')
-                data_heart = response_heart.read()
-                if isinstance(data_heart, bytes):
-                    data_heart = data_heart.decode('utf-8')
-                heart_data = json.loads(data_heart)
-                
-                for i, shape in enumerate(heart_data["coordenadas"]):
-                    color = heart_data["color"][i]
-                    set_color(color[0], color[1], color[2])
-                    begin_fill()
-                    pen_up()
-                    goto(shape[0][0] + 150, shape[0][1])
-                    pen_down()
-                    ctx.moveTo(turtle_x, turtle_y)
-                    for j in range(1, len(shape)):
-                        goto(shape[j][0] + 150, shape[j][1])
-                    end_fill()
-                
-                status_element = document['status']
-                status_element.textContent = "¡Ali y corazón dibujados! "
-                status_element.className = 'status completed'
-                
-            except Exception as e:
-                document['status'].textContent = f"Error: {str(e)}"
+            end() {
+                this.isDragging = false;
+            }
 
-        window.startDrawing = start_drawing
-        window.pauseDrawing = pause_drawing
-        window.resetDrawing = reset_drawing
-        window.updateSpeed = update_speed
-        window.drawAliAndHeart = draw_ali_and_heart
+            animate() {
+                if (!this.isDragging) {
+                    this.x += this.vx;
+                    this.y += this.vy;
 
-        clear_canvas()
-        document['status'].textContent = "Cargando datos..."
-        load_data()
+                    const rect = this.el.getBoundingClientRect();
+                    const maxX = window.innerWidth - rect.width;
+                    const maxY = window.innerHeight - rect.height;
+
+                    if (this.x < 0) { this.x = 0; this.vx *= -this.bounce; }
+                    if (this.x > maxX) { this.x = maxX; this.vx *= -this.bounce; }
+                    if (this.y < 0) { this.y = 0; this.vy *= -this.bounce; }
+                    if (this.y > maxY) { this.y = maxY; this.vy *= -this.bounce; }
+
+                    this.vx *= this.friction;
+                    this.vy *= this.friction;
+                }
+
+                this.el.style.left = this.x + 'px';
+                this.el.style.top = this.y + 'px';
+                this.el.style.transform = this.isDragging ? 'scale(1.1)' : 'scale(1)';
+                
+                requestAnimationFrame(() => this.animate());
+            }
+        }
+
+        document.querySelectorAll('.draggable').forEach(el => new Interactable(el));
     </script>
-    
 </body>
 </html>
